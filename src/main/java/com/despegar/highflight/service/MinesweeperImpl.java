@@ -69,7 +69,9 @@ public class MinesweeperImpl implements Minesweeper {
 	}
 	
 	// Allow the player to uncover a cell
-	public void uncover(int row, int col){}
+	public void uncover(int row, int col) {
+		
+	}
 	
 	// Marking/unmarking suspicious cells
 	public void flagAsMine(int row, int col){}
@@ -79,11 +81,15 @@ public class MinesweeperImpl implements Minesweeper {
 	public boolean isGameOver(){return true;}
 	public boolean isWinningGame(){return true;}
 	
+	
+	//DISPLAY
 	public void display(){
 		for (int i=0; i<rows(); i++) {
 			for (int j=0; j<cols(); j++) {
 				if (cells[i][j].getShowEnable()) {
 					System.out.print(showCellContent(i, j) + "\t");
+				} else {
+					System.out.print("?" + "\t");
 				}
 			}
 			System.out.println("\n");
@@ -113,8 +119,6 @@ public class MinesweeperImpl implements Minesweeper {
 	}
 
 	
-	
-
 	//GETTERS AND SETTERS
 	public Cell[][] getCells() {
 		return cells;
