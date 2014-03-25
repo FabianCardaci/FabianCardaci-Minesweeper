@@ -3,28 +3,19 @@ package com.despegar.highflight.service;
 import java.util.HashSet;
 import java.util.Iterator;
 
-public class NumberCell implements Cell {
+public class NumberCell extends Cell {
 	
 	CellPosition cellPosition;
-	int content;
-	boolean showEnable;
 	
 	public NumberCell(CellPosition cellPosition) {
-		this.showEnable = true;
+		showEnable = false;
+		flag=false;
 		this.cellPosition = cellPosition;
-	}
-	
-	public boolean getShowEnable() {
-		return showEnable;
-	}
-	
-	public String getContent() {
-		return String.valueOf(content);
 	}
 	
 	public void loadContent(MinesweeperImpl minesweeper) {
 		HashSet<CellPosition> adjacents = adjacentCellPositions(minesweeper);
-		this.content = adjacentMines(adjacents, minesweeper);
+		this.content = String.valueOf(adjacentMines(adjacents, minesweeper));
 	}
 	
 	public HashSet<CellPosition> adjacentCellPositions(MinesweeperImpl minesweeper) {

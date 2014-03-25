@@ -1,22 +1,17 @@
 package com.despegar.highflight.service;
 
-public class MineCell implements Cell {
-	
-	boolean showEnable;
+public class MineCell extends Cell {
 	
 	public MineCell() {
+		content = "M";
 		showEnable = false;
+		flag = false;
 	}
 	
-	public boolean getShowEnable() {
-		return showEnable;
-	}
+	
 
 	public void loadContent(MinesweeperImpl minesweeper) {}
 	
-	public String getContent() {
-		return "M";
-	}
-	
+
 	
 }

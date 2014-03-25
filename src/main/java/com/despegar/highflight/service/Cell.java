@@ -1,11 +1,49 @@
 package com.despegar.highflight.service;
 
-public interface Cell {
-
-	boolean getShowEnable();
+public abstract class Cell {
 	
-	void loadContent(MinesweeperImpl minesweeper);
+	boolean showEnable;
+	String content;
+	boolean flag;
 	
-	String getContent();
+	public boolean getShowEnable() {
+		return showEnable;
+	}
+	
+	public String getText() {
+		if (flag) {
+			return "F";
+		} else {
+			if (showEnable) {
+				return content;
+			} else {
+				return "-";
+			}
+		}
+	}
+	
+	public String getContent() {
+		return content;
+	}
+	
+	
+	public void loadContent(MinesweeperImpl minesweeper){}
+	
+	public void uncover() {
+		showEnable = true;
+	
+	}
+	
+	public void flagAsMine() {
+		flag = true;
+	}
+	
+	public void clearFlag() {
+		flag = false;
+	}
+	
+	public boolean getShowEnabled() {
+		return this.showEnable;
+	}
 	
 }

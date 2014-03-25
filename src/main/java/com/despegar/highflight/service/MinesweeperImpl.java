@@ -1,6 +1,10 @@
 package com.despegar.highflight.service;
 
 import java.util.Random;
+import java.util.Set;
+
+import com.despegar.highflight.utils.Matrix2DCellPosition;
+import com.despegar.highflight.utils.MatrixUtils;
 
 public class MinesweeperImpl implements Minesweeper {
 	
@@ -68,29 +72,80 @@ public class MinesweeperImpl implements Minesweeper {
 		return cells[row][col];
 	}
 	
-	// Allow the player to uncover a cell
 	public void uncover(int row, int col) {
-		
+		if (cells[row][col].getContent() == "M") {
+			cells[row][col].uncover();
+		} else {
+			MatrixUtils matrixUtil = new MatrixUtils();
+			Set<Matrix2DCellPosition> positions = matrixUtil.cascade(getRawGrid(), row, col);
+			for (Matrix2DCellPosition position : positions) {
+				cells[position.getRow()][position.getColumn()].uncover();
+			}
+		}
 	}
 	
-	// Marking/unmarking suspicious cells
-	public void flagAsMine(int row, int col){}
-	public void clearFlag(int row, int col){}
+	public void flagAsMine(int row, int col){
+		cells[row][col].flagAsMine();
+	}
 	
-	// Game termination
-	public boolean isGameOver(){return true;}
-	public boolean isWinningGame(){return true;}
+	public void clearFlag(int row, int col) {
+		cells[row][col].clearFlag();
+	}
 	
+	public boolean isWinningGame() {
+		int showCells = 0;
+		for (int i=0; i<rows(); i++) {
+			for (int j=0; j<cols(); j++) {
+				if (cells[i][j].getShowEnable()) {
+					showCells++;
+				}
+			}
+		}
+		if (showCells < (gridSize() - quantityOfMines())) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	public int gridSize() {
+		return rows()*cols();
+	}
+	
+	public int quantityOfMines() {
+		int count = 0;
+		for (int i=0; i<rows(); i++) {
+			for (int j=0; j<cols(); j++) {
+				if (cells[i][j]. getContent() == "M") {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+	
+	public boolean isGameOver() {
+		return (isWinningGame() || exploitedMine());
+	}
+	
+	
+	public boolean exploitedMine() {
+		boolean exploited = false;
+		for (int i=0; i<rows(); i++) {
+			for (int j=0; j<cols(); j++) {
+				if (cells[i][j].getContent()=="M" && cells[i][j].getShowEnable()) {
+					exploited = true;
+				}
+			}
+		}
+		return exploited;
+	}
 	
 	//DISPLAY
 	public void display(){
 		for (int i=0; i<rows(); i++) {
 			for (int j=0; j<cols(); j++) {
-				if (cells[i][j].getShowEnable()) {
-					System.out.print(showCellContent(i, j) + "\t");
-				} else {
-					System.out.print("?" + "\t");
-				}
+				System.out.print(cells[i][j].getText() + "\t");
 			}
 			System.out.println("\n");
 		}
@@ -99,23 +154,34 @@ public class MinesweeperImpl implements Minesweeper {
 	public void displayInternal() {
 		for (int i=0; i<rows(); i++) {
 			for (int j=0; j<cols(); j++) {
-				System.out.print(showCellContent(i, j) + "\t");
+				System.out.print(cells[i][j].getContent() + "\t");
 			}
 			System.out.println("\n");
 		}
 	}
 	
 	public void displayRaw(){
+		int[][] rawGrid = getRawGrid();
+		for (int i=0; i<rows(); i++) {
+			for (int j=0; j<cols(); j++) {
+				System.out.print(rawGrid[i][j] + "\t");
+			}
+			System.out.println("\n");
+		}
+	}
+	
+	public int[][] getRawGrid() {
+		int[][] rawGrid = new int[rows()][cols()];
 		for (int i=0; i<rows(); i++) {
 			for (int j=0; j<cols(); j++) {
 				if (cells[i][j].getContent() == "M") {
-					System.out.print(1 + "\t");
+					rawGrid[i][j] = 1;
 				} else {
-					System.out.print(0 + "\t");
+					rawGrid[i][j] = 0;
 				}
 			}
-			System.out.println("\n");
-		}	
+		}
+		return rawGrid;
 	}
 
 	
@@ -126,24 +192,6 @@ public class MinesweeperImpl implements Minesweeper {
 
 	public void setCells(Cell[][] cells) {
 		this.cells = cells;
-	}
-	
-
-	//MAIN
-	public String showCellContent(int row, int col) {
-		return String.valueOf(cells[row][col].getContent());
-	}
-
-	public static void main(String[] args) {
-		MinesweeperImpl ms = new MinesweeperImpl(4,5);
-		System.out.println("DISPLAY INTERNAL");
-		ms.displayInternal();
-		System.out.println("\n");
-		System.out.println("DISPLAY");
-		ms.display();
-		System.out.println("\n");
-		System.out.println("DISPLAY RAW");
-		ms.displayRaw();
 	}
 
 }
