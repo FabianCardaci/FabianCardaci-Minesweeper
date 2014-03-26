@@ -6,7 +6,8 @@ public abstract class Cell {
 	String content;
 	boolean flag;
 	
-	// Getters
+// Getters
+//-------------------------------------------------------------------------------
 	public boolean getShowEnable() {
 		return showEnable;
 	}
@@ -20,7 +21,12 @@ public abstract class Cell {
 	}
 
 
-	//Others
+//Others
+//---------------------------------------------------------------------------------
+	public void loadContent(MinesweeperImpl minesweeper){}
+	
+	public void uncover(MinesweeperImpl minesweeper) {}
+
 	public String getText() {
 		if (flag) {
 			return "F";
@@ -31,12 +37,6 @@ public abstract class Cell {
 				return "-";
 			}
 		}
-	}
-	
-	public void loadContent(MinesweeperImpl minesweeper){}
-	
-	public void uncover() {
-		showEnable = true;
 	}
 	
 	public void flagAsMine() {

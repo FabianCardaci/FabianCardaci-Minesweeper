@@ -8,4 +8,13 @@ public class MineCell extends Cell {
 		flag = false;
 	}
 	
+	
+	@Override
+	public void uncover(MinesweeperImpl minesweeper) {
+		if (!showEnable) {
+			this.showEnable = true;
+			minesweeper.exploitedMine();
+		}
+	}
+	
 }
