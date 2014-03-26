@@ -37,16 +37,13 @@ public class Main {
 			System.out.println("\n");
 			game.display();
 			System.out.println("\n");
-			
 		}
-		
 		if (game.isWinningGame()) {
 			System.out.println("YOU WIN!");
 		} else {
 			game.displayInternal();
 			System.out.println("YOU LOSE!");
 		}
-
 	}
 
 }

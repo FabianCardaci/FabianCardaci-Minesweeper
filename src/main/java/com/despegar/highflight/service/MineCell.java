@@ -8,10 +8,4 @@ public class MineCell extends Cell {
 		flag = false;
 	}
 	
-	
-
-	public void loadContent(MinesweeperImpl minesweeper) {}
-	
-
-	
 }

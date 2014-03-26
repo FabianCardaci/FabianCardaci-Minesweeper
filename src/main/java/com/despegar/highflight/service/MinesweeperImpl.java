@@ -2,15 +2,13 @@ package com.despegar.highflight.service;
 
 import java.util.Random;
 import java.util.Set;
-
-import com.despegar.highflight.utils.Matrix2DCellPosition;
-import com.despegar.highflight.utils.MatrixUtils;
+import com.despegar.highflight.utils.*;
 
 public class MinesweeperImpl implements Minesweeper {
 	
 	private Cell[][] cells;
 	
-	//INITIALIZATION AND LOAD
+	//Initialization and load
 	public MinesweeperImpl(int rows, int cols) {
 		cells = new Cell[rows][cols];
 		loadMineCells(0.15);
@@ -20,17 +18,17 @@ public class MinesweeperImpl implements Minesweeper {
 	public void loadMineCells(double percent) {
 		int quantityOfMines = (int) Math.rint(rows() * cols() * percent);
 		for (int i=1; i<=quantityOfMines; i++) {
-			CellPosition cellPosition = randomCellPosition();
-			cells[cellPosition.row][cellPosition.col] = new MineCell();
+			Matrix2DCellPosition cellPosition = randomCellPosition();
+			cells[cellPosition.getRow()][cellPosition.getColumn()] = new MineCell();
 		}
 	}
 	
-	public CellPosition randomCellPosition() {
+	public Matrix2DCellPosition randomCellPosition() {
 		Random random = new Random();
 		int row = random.nextInt(rows());
 		int col = random.nextInt(cols());
 		if (cells[row][col] == null) {
-			return new CellPosition(row,col);
+			return new Matrix2DCellPosition(row,col);
 		} else {
 			return randomCellPosition();
 		}
@@ -45,7 +43,7 @@ public class MinesweeperImpl implements Minesweeper {
 		for (int i=0; i<rows(); i++) {
 			for (int j=0; j<cols(); j++) {
 				if (cells[i][j] == null){
-					cells[i][j] = new NumberCell(new CellPosition(i,j));
+					cells[i][j] = new NumberCell(new Matrix2DCellPosition(i,j));
 				}
 			}
 		}
@@ -59,7 +57,7 @@ public class MinesweeperImpl implements Minesweeper {
 		}
 	}
 	
-	//OTROS
+	//Others
 	public int rows() {
 		return cells.length;
 	}
@@ -72,24 +70,31 @@ public class MinesweeperImpl implements Minesweeper {
 		return cells[row][col];
 	}
 	
-	public void uncover(int row, int col) {
-		if (cells[row][col].getContent() == "M") {
-			cells[row][col].uncover();
-		} else {
-			MatrixUtils matrixUtil = new MatrixUtils();
-			Set<Matrix2DCellPosition> positions = matrixUtil.cascade(getRawGrid(), row, col);
-			for (Matrix2DCellPosition position : positions) {
-				cells[position.getRow()][position.getColumn()].uncover();
-			}
-		}
-	}
-	
 	public void flagAsMine(int row, int col){
 		cells[row][col].flagAsMine();
 	}
 	
 	public void clearFlag(int row, int col) {
 		cells[row][col].clearFlag();
+	}
+	
+	public boolean thereIsMine(int row, int col) {
+		return cells[row][col].getContent().equals("M");
+	}
+	
+	public int gridSize() {
+		return rows()*cols();
+	}
+
+	public void uncover(int row, int col) {
+		if (thereIsMine(row,col)) {
+			cells[row][col].uncover();
+		} else {
+			Set<Matrix2DCellPosition> positions = MatrixUtils.cascade(getRawGrid(), row, col);
+			for (Matrix2DCellPosition position : positions) {
+				cells[position.getRow()][position.getColumn()].uncover();
+			}
+		}
 	}
 	
 	public boolean isWinningGame() {
@@ -108,15 +113,11 @@ public class MinesweeperImpl implements Minesweeper {
 		}
 	}
 	
-	public int gridSize() {
-		return rows()*cols();
-	}
-	
 	public int quantityOfMines() {
 		int count = 0;
 		for (int i=0; i<rows(); i++) {
 			for (int j=0; j<cols(); j++) {
-				if (cells[i][j]. getContent() == "M") {
+				if (thereIsMine(i,j)) {
 					count++;
 				}
 			}
@@ -128,12 +129,11 @@ public class MinesweeperImpl implements Minesweeper {
 		return (isWinningGame() || exploitedMine());
 	}
 	
-	
 	public boolean exploitedMine() {
 		boolean exploited = false;
 		for (int i=0; i<rows(); i++) {
 			for (int j=0; j<cols(); j++) {
-				if (cells[i][j].getContent()=="M" && cells[i][j].getShowEnable()) {
+				if (thereIsMine(i,j) && cells[i][j].getShowEnable()) {
 					exploited = true;
 				}
 			}
@@ -141,7 +141,22 @@ public class MinesweeperImpl implements Minesweeper {
 		return exploited;
 	}
 	
-	//DISPLAY
+	public int[][] getRawGrid() {
+		int[][] rawGrid = new int[rows()][cols()];
+		for (int i=0; i<rows(); i++) {
+			for (int j=0; j<cols(); j++) {
+				if (thereIsMine(i,j)) {
+					rawGrid[i][j] = 1;
+				} else {
+					rawGrid[i][j] = 0;
+				}
+			}
+		}
+		return rawGrid;
+	}
+
+	
+	//Display
 	public void display(){
 		for (int i=0; i<rows(); i++) {
 			for (int j=0; j<cols(); j++) {
@@ -170,22 +185,8 @@ public class MinesweeperImpl implements Minesweeper {
 		}
 	}
 	
-	public int[][] getRawGrid() {
-		int[][] rawGrid = new int[rows()][cols()];
-		for (int i=0; i<rows(); i++) {
-			for (int j=0; j<cols(); j++) {
-				if (cells[i][j].getContent() == "M") {
-					rawGrid[i][j] = 1;
-				} else {
-					rawGrid[i][j] = 0;
-				}
-			}
-		}
-		return rawGrid;
-	}
 
-	
-	//GETTERS AND SETTERS
+	//Getters and setters
 	public Cell[][] getCells() {
 		return cells;
 	}
